@@ -22,7 +22,7 @@ ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx', 'txt'}
 from models import db,User,Job,Application,SavedJob
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
+app.config['SECRET_KEY'] = '4f5f83c136faf29c4c73183ec73868c0'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///job_portal.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
