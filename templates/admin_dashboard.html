@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-danger mb-4">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <span class="navbar-brand">Admin Dashboard</span>
+            <div class="d-flex gap-2">
+                <!-- <a href="{{ url_for('profile') }}" class="btn btn-outline-light">My Profile</a> -->
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
+            </div>
+        </div>
+    </nav>
+    
+
+    <div class="container">
+
+        <!-- User Filter Form -->
+        <form method="GET" action="{{ url_for('admin_dashboard') }}" class="mb-4">
+            <input type="hidden" name="job_search" value="{{ job_search }}">
+            <div class="input-group">
+                <input type="text" name="user_search" class="form-control" placeholder="Search users by user type" value="{{ user_search }}">
+                <button class="btn btn-primary" type="submit">Filter Users</button>
+            </div>
+        </form>
+
+        <h4>Manage Users</h4>
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>User Type</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.full_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.user_type }}</td>
+                    <td>
+                        <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-sm btn-danger">Delete</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr><td colspan="5" class="text-center">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Job Filter Form -->
+        <form method="GET" action="{{ url_for('admin_dashboard') }}" class="mb-4">
+            <input type="hidden" name="user_search" value="{{ user_search }}">
+            <div class="input-group">
+                <input type="text" name="job_search" class="form-control" placeholder="Search jobs by title or location" value="{{ job_search }}">
+                <button class="btn btn-primary" type="submit">Filter Jobs</button>
+            </div>
+        </form>
+
+        <h4 class="mt-5">Manage Job Listings</h4>
+        <div class="list-group">
+            {% for job in jobs %}
+                <div class="list-group-item">
+                    <h5>{{ job.title }}</h5>
+                    <p>{{ job.company }} — {{ job.location }} — Salary: {{ job.salary }} - Openings: {{ job.openings }}</p>
+                    <a href="{{ url_for('delete_job', job_id=job.id) }}" class="btn btn-sm btn-outline-danger">Remove</a>
+                </div>
+            {% else %}
+                <p>No job listings.</p>
+            {% endfor %}
+        </div>
+
+    </div>
+</body>
+</html>

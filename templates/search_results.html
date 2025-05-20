@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Search Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container my-5">
+    <h4 class="mb-4">Search Results for:
+        <span class="text-primary">{{ title or 'Any Title' }}</span> in
+        <span class="text-primary">{{ location or 'Any Location' }}</span>
+    </h4>
+
+    {% if jobs %}
+        <div class="list-group">
+            {% for job in jobs %}
+                <a href="{{ url_for('job_detail', job_id=job.id) }}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ job.title }}</h5>
+                        <small>{{ job.location }}</small>
+                    </div>
+                    <p class="mb-1">{{ job.company }}</p>
+                    <small>Salary: {{ job.salary }}</small><br>
+                    <small>Openings: {{ job.openings }}</small>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No jobs found matching your criteria.</p>
+    {% endif %}
+
+    <a href="{{ url_for('job_seeker_dashboard') }}" class="btn btn-secondary mt-4">Back to Dashboard</a>
+</div>
+
+</body>
+</html>
