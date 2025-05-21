@@ -273,10 +273,10 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/apply/<int:job_id>',methods=['GET','POST'])
+
+@app.route('/apply/<int:job_id>', methods=['GET', 'POST'])
+@login_required
 def apply_job(job_id):
-
-
     job = Job.query.get_or_404(job_id)
 
     # Prevent applying if job is closed
@@ -284,8 +284,13 @@ def apply_job(job_id):
         flash("This job is no longer accepting applications.", "warning")
         return redirect(url_for('job_detail', job_id=job.id))
 
+    # Optional: Check if the user has already applied
+    existing_application = Application.query.filter_by(job_id=job_id, job_seeker_id=current_user.id).first()
+    if existing_application:
+        flash("You have already applied for this job.", "info")
+        return redirect(url_for('job_detail', job_id=job.id))
+
     if request.method == 'POST':
-        # Check if the post request has the file part
         if 'resume' not in request.files:
             flash('No resume file part', 'danger')
             return redirect(request.url)
@@ -293,7 +298,6 @@ def apply_job(job_id):
         file = request.files['resume']
         cover_letter = request.form.get('cover_letter')
 
-        # If user does not select file, browser may submit empty part
         if file.filename == '':
             flash('No selected file', 'danger')
             return redirect(request.url)
@@ -304,28 +308,28 @@ def apply_job(job_id):
             os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
             file.save(save_path)
 
-            # Save the application to database
             new_application = Application(
-                resume=filename,  
+                resume=filename,
                 cover_letter=cover_letter,
                 job_seeker_id=current_user.id,
-                job_id=job_id
+                job_id=job.id,
+                applied_at=datetime.utcnow()
             )
             db.session.add(new_application)
 
+            # Remove from saved jobs if present
             saved = SavedJob.query.filter_by(job_id=job_id, user_id=current_user.id).first()
             if saved:
-               db.session.delete(saved)
+                db.session.delete(saved)
 
             db.session.commit()
-
             flash('Application submitted successfully!', 'success')
             return redirect(url_for('job_seeker_dashboard'))
         else:
             flash('Invalid file type. Allowed types: pdf, doc, docx, txt', 'danger')
             return redirect(request.url)
 
-    return render_template('apply_job.html', job_id=job_id)
+    return render_template('apply_job.html', job=job)
 
 
 # --------------------

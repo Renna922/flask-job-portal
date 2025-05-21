@@ -24,7 +24,7 @@
     <div class="card shadow p-4" style="width: 100%; max-width: 600px;">
         <h3 class="mb-4 text-center">Apply for Job</h3>
 
-        <form method="POST" action="{{ url_for('apply_job', job_id=job_id) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ url_for('apply_job', job_id=job.id) }}" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="resume" class="form-label">Upload Resume</label>
                 <input type="file" id="resume" name="resume" class="form-control" required />
