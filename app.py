@@ -313,7 +313,7 @@ def apply_job(job_id):
             )
             db.session.add(new_application)
 
-            saved = SavedJob.query.filter_by(job_id=job_id, job_seeker_id=current_user.id).first()
+            saved = SavedJob.query.filter_by(job_id=job_id, user_id=current_user.id).first()
             if saved:
                db.session.delete(saved)
 
